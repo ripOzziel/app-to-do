@@ -6,7 +6,7 @@ const Login = ({navigation})=>{
     return(
         <View style = {{marginTop: Constants.statusBarHeight, 
             flexGrow: 1}} >
-            <Text>Pantalla de login</Text>
+            <Text>Login</Text>
             <Button 
                 title='Acceder'
                 onPress={() => {navigation.navigate('HomeScreen')}}
