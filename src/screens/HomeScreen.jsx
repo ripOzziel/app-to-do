@@ -3,6 +3,7 @@ import  Constants  from 'expo-constants'
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, FlatList} from 'react-native'
 import Footer from '../components/Footer.jsx'
 import { useState, useEffect} from 'react'
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const HomeScreen = ()=>{
@@ -10,7 +11,27 @@ const HomeScreen = ()=>{
     const [agregarTarea, setAgregarTarea] = useState(false)
     const [text, setText] = useState('')
     const [tasks, setTasks] = useState([])
+    const storeData = async (value) => {
+        try {
+          await AsyncStorage.setItem('my-tasks', JSON.stringify(value));
+        } catch (e) {
+          // saving error
+        }
+      };
+
+    const getData = async () => {
+    try {
+        const value = await AsyncStorage.getItem('my-tasks');
+        if (value !== null) {
+            const tasksLocal = JSON.parse(value)
+            setTasks(tasksLocal)
+        }
+    } catch (e) {
+        // error reading value
+    }
+    };
     
+    useEffect(()=>{getData()},[] )
 
     const startToAdd = () =>{
         console.log("agregar");
@@ -26,6 +47,7 @@ const HomeScreen = ()=>{
        tmp.push(newTask)
         console.log("Agregada"); 
         setTasks(tmp)
+        storeData(tmp)
         setText('')
     }
 
@@ -36,6 +58,7 @@ const HomeScreen = ()=>{
         const toDo = tasks[index]
         toDo.done = !toDo.done
         setTasks(tmp)
+        storeData(tmp)
 
     }
 
@@ -46,6 +69,7 @@ const HomeScreen = ()=>{
         tmp.splice(index,1)
         setTasks(tmp)
         setText('')
+        storeData(tmp)
 
     }
     const renderItem = ({item}) =>{
