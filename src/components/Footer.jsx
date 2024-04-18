@@ -1,8 +1,16 @@
-import * as React from 'react'
+import React, {useState} from 'react'
 import { Pressable, View, Text, Image, StyleSheet } from 'react-native'
 
 const Footer = () => {
+    const [agregarTarea, setAgregarTarea] = useState(false)
 
+    const startToAdd = () =>{
+        console.log("agregar");
+    }
+
+    const addTask = () =>{
+
+    }
     return (
         <View style={styles.container}>
             <Pressable style={styles.button}>
@@ -12,7 +20,7 @@ const Footer = () => {
                 />
                 <Text style={styles.buttonText}>Nombre usuario inf</Text>
             </Pressable>
-            <Pressable style={styles.button}>
+            <Pressable style={styles.button} onPress={startToAdd}>
                 <Image 
                     source={require("../../assets/img/agregar-tarea.png")}
                     style={styles.image}
