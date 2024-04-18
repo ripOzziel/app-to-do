@@ -8,31 +8,30 @@ const Registro = ({navigation}) => {
             <View>
                 <Text style = {styles.title}>Crear una cuenta</Text>
         
-                <Text style={styles.instruction}>Nombre de usuario</Text>
+                <Text style = {styles.instruction}>Nombre de usuario</Text>
                 <TextInput
-                    style={styles.inputs}
+                    style = {styles.inputs}
                     placeholder = 'Werito mercado guzman'
                 />
-                <Text style={styles.instruction}>Correo</Text>
+                <Text style = {styles.instruction}>Correo</Text>
                 {/*TODO: AGREGAR UN VALIDAR PARA ESTE INPUT PARA QUE ACEPTE SOLO CORREOS*/}
                 <TextInput
                     style={styles.inputs}
                     placeholder = 'ej@ite.im'
                 />
-                <Text style={styles.instruction}>Contraseña</Text>
+                <Text style = {styles.instruction}>Contraseña</Text>
                 <TextInput
-                    style={styles.inputs}
+                    style = {styles.inputs}
                     placeholder = '**********'
                     secureTextEntry = {true}
                 />
             </View>
             <Pressable
                 style={styles.btn}
-                onPress={()=>{navigation.navigate('Login')}} >
-                <Text style={styles.btnTxt}> Terminar Registro</Text>
+                onPress={() => {navigation.navigate('Login')}} >
+                <Text style = {styles.btnTxt}> Terminar Registro</Text>
             </Pressable>
         </View>
-
     )
 }
 
