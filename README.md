@@ -5,6 +5,10 @@ que el usuario tenga
 
 formas de ejecutar
 
-npm run android
-npm run ios
-npm run web
+npm run android  
+npm run ios  
+npm run web  
+
+**Librerias usadas**
+[React Native][https://reactnative.dev/]
+[Expo][https://expo.dev/]
