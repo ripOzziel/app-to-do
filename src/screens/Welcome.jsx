@@ -6,7 +6,9 @@ const Welcome = ({navigation}) =>{
     return(
         <View style = {styles.container}>
             <View>
-                {/*TODO: DEBERIAMOS DE PONER UN LOGO PARA ACOMPAÑAR LA APP?*/ }
+                {/*TODO: DEBERIAMOS DE PONER UN LOGO PARA ACOMPAÑAR LA APP?
+                  hay werito, si supieras
+                */ }
                 <Text style = {styles.title}>Nombre Aplicacion</Text>
                 <View style={styles.btns}>
                     <Pressable
