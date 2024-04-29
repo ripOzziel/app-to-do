@@ -21,5 +21,5 @@ CREATE TABLE IF NOT EXISTS tasks (
     completed BOOLEAN DEFAULT FALSE,
     user_id INT,
     PRIMARY KEY (id),
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
