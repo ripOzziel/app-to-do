@@ -4,9 +4,9 @@ POST {{api}}/register
 Content-Type: application/json
 
 {
-    "name": "super User",
+    "password": "password",
     "email": "test@example.com",
-    "password": "password"
+    "name": "super User"
 }
 
 ###
@@ -19,7 +19,7 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{api}}/1/delete
+DELETE {{api}}/3/delete
 
 ###
 POST {{api}}/1/task/create
@@ -39,7 +39,7 @@ Content-Type: application/json
 GET {{api}}/1/tasks
 
 ###
-DELETE {{api}}/1/task/2/delete
+DELETE {{api}}/1/task/1/delete
 
 ###
 PUT {{api}}/1/task/1/update

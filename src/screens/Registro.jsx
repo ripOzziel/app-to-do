@@ -1,38 +1,73 @@
 import * as React from 'react'
 import  Constants  from 'expo-constants'
-import { View, Text, TextInput, StyleSheet, Pressable} from "react-native"
+import { View, Text, TextInput, StyleSheet, Pressable, Alert} from "react-native"
+import { createUser } from '../../api';
 
-const Registro = ({navigation}) => {
-    return(
-        <View style = {styles.header} >
-            <View>
-                <Text style = {styles.title}>Crear una cuenta</Text>
+const Registro = ({ navigation }) => {
+  const [username, setUsername] = React.useState('');
+  const [email, setEmail] = React.useState('');
+  const [password, setPassword] = React.useState('');
+
+  const handleRegistro = async () => {
+    console.log('funciono'); 
+    
+    try {
+        const userData = {  
+            name: username, 
+            email: email, 
+            password: password 
+        };
+
+        console.log('datos del usuario:', userData); 
         
-                <Text style = {styles.instruction}>Nombre de usuario</Text>
-                <TextInput
-                    style = {styles.inputs}
-                    placeholder = 'Werito mercado guzman'
-                />
-                <Text style = {styles.instruction}>Correo</Text>
-                {/*TODO: AGREGAR UN VALIDAR PARA ESTE INPUT PARA QUE ACEPTE SOLO CORREOS*/}
-                <TextInput
-                    style={styles.inputs}
-                    placeholder = 'ej@ite.im'
-                />
-                <Text style = {styles.instruction}>Contraseña</Text>
-                <TextInput
-                    style = {styles.inputs}
-                    placeholder = '**********'
-                    secureTextEntry = {true}
-                />
-            </View>
-            <Pressable
-                style={styles.btn}
-                onPress={() => {navigation.navigate('Login')}} >
-                <Text style = {styles.btnTxt}> Terminar Registro</Text>
-            </Pressable>
-        </View>
-    )
+        console.log('enviando solicitud de registro'); 
+        const response = await createUser(userData); 
+
+        console.log('respuesta del servidor:', response); 
+        
+        navigation.navigate('Login'); 
+    } catch (error) {
+        console.log('Error durante el registro:', error); 
+        Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo');
+    }
+};
+
+  return (
+      <View style={styles.header}>
+          <View>
+              <Text style={styles.title}>Crear una cuenta</Text>
+
+              <Text style={styles.instruction}>Nombre de usuario</Text>
+              <TextInput
+                  style={styles.inputs}
+                  placeholder='Werito mercado guzman'
+                  value={username}
+                  onChangeText={setUsername}
+              />
+              <Text style={styles.instruction}>Correo</Text>
+              <TextInput
+                  style={styles.inputs}
+                  placeholder='ej@ite.im'
+                  value={email}
+                  onChangeText={setEmail}
+              />
+              <Text style={styles.instruction}>Contraseña</Text>
+              <TextInput
+                  style={styles.inputs}
+                  placeholder='**********'
+                  secureTextEntry={true}
+                  value={password}
+                  onChangeText={setPassword}
+              />
+          </View>
+          <Pressable
+              style={styles.btn}
+              onPress={handleRegistro} // Llama a la función handleRegistro cuando se presione el botón
+          >
+              <Text style={styles.btnTxt}> Terminar Registro</Text>
+          </Pressable>
+      </View>
+  )
 }
 
 const styles = StyleSheet.create({
