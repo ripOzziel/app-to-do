@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import  Constants  from 'expo-constants';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, FlatList, Pressable} from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import Footer from '../components/Footer.jsx';
 import { getAllTask } from '../../api.js';
 
-
-const HomeScreen = ({ route, navigation }) => {
+const HomeScreen = ({ route }) => {
     const userId = route.params?.userId;
     const [tasks, setTasks] = useState([]);
 
@@ -49,7 +48,7 @@ const HomeScreen = ({ route, navigation }) => {
                 contentContainerStyle={styles.taskList}
             />
 
-            <Footer userId={userId} />
+            <Footer userId={userId}  />
         </View>
     );
 };
