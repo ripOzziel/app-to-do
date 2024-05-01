@@ -8,7 +8,7 @@ const Registro = ({ navigation }) => {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  const handleRegistro = async () => {
+  const registerUser = async () => {
     console.log('funciono'); 
     
     try {
@@ -26,9 +26,9 @@ const Registro = ({ navigation }) => {
         console.log('respuesta del servidor:', response); 
         
         navigation.navigate('Login'); 
-    } catch (error) {
-        console.log('Error durante el registro:', error); 
-        Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo');
+    } catch (err) {
+        console.log('Error durante el registro:', err); 
+        Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
     }
 };
 
@@ -62,7 +62,7 @@ const Registro = ({ navigation }) => {
           </View>
           <Pressable
               style={styles.btn}
-              onPress={handleRegistro} // Llama a la función handleRegistro cuando se presione el botón
+              onPress={registerUser} 
           >
               <Text style={styles.btnTxt}> Terminar Registro</Text>
           </Pressable>

@@ -39,7 +39,7 @@ Content-Type: application/json
 GET {{api}}/1/tasks
 
 ###
-DELETE {{api}}/1/task/1/delete
+DELETE {{api}}/1/task/4/delete
 
 ###
 PUT {{api}}/1/task/1/update

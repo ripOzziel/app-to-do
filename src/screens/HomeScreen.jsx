@@ -1,188 +1,134 @@
-import React from 'react'
-import  Constants  from 'expo-constants'
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, FlatList} from 'react-native'
-import Footer from '../components/Footer.jsx'
-import { useState, useEffect} from 'react'
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import  Constants  from 'expo-constants';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, Dimensions, FlatList, Pressable} from 'react-native'
+import Footer from '../components/Footer.jsx';
+import { getAllTask } from '../../api.js';
 
 
-const HomeScreen = ()=>{
-    //HOOKS
-    const [agregarTarea, setAgregarTarea] = useState(false)
-    const [text, setText] = useState('')
-    const [tasks, setTasks] = useState([])
-    const storeData = async (value) => {
+const HomeScreen = ({ route, navigation }) => {
+    const userId = route.params?.userId;
+    const [tasks, setTasks] = useState([]);
+
+    const fetchTasks = async () => {
         try {
-          await AsyncStorage.setItem('my-tasks', JSON.stringify(value));
-        } catch (e) {
-          // saving error
+            const tasksData = await getAllTask(userId);
+            setTasks(tasksData.tasks);
+        } catch (error) {
+            console.error('Error al obtener las tareas:', error);
         }
-      };
-
-    const getData = async () => {
-    try {
-        const value = await AsyncStorage.getItem('my-tasks');
-        if (value !== null) {
-            const tasksLocal = JSON.parse(value)
-            setTasks(tasksLocal)
-        }
-    } catch (e) {
-        // error reading value
-    }
     };
-    
-    useEffect(()=>{getData()},[] )
 
-    const startToAdd = () =>{
-        console.log("agregar");
-        setAgregarTarea(true)
-    }
-    const addTask = () =>{
-        const tmp = [...tasks]
-        const newTask={
-            title: text,
-            done: false,
-            date: new Date()
-        }
-       tmp.push(newTask)
-        console.log("Agregada"); 
-        setTasks(tmp)
-        storeData(tmp)
-        setText('')
-    }
+    useEffect(() => {
+        fetchTasks();
+    }, []);
 
-    const markDone = (task) =>{
-        console.log("Marcada");
-        const tmp = [...tasks]
-        const index = tmp.findIndex(el => el.title === task.title)
-        const toDo = tasks[index]
-        toDo.done = !toDo.done
-        setTasks(tmp)
-        storeData(tmp)
-
-    }
-
-    const deleteFunction = (task) =>{
-        console.log("Eliminada");
-        const tmp = [...tasks]
-        const index = tmp.findIndex(el => el.title === task.title)
-        tmp.splice(index,1)
-        setTasks(tmp)
-        setText('')
-        storeData(tmp)
-
-    }
-    const renderItem = ({item}) =>{
-        return (
-            <View style={styles.itemContainer}>
-                <TouchableOpacity
-                onPress={()=>markDone(item)}
-                >
-                    <Text style={item.done? styles.textDone : styles.text}>{item.title}</Text>
-                    <Text style={styles.text}>{new Date(item.date).toLocaleDateString()}</Text>
-                </TouchableOpacity>
-
-                {
-                    item.done &&
-                    <TouchableOpacity 
-                    style={styles.removeButton}
-                    onPress={() =>deleteFunction(item)}
-                    >
-                        <Text>Eliminar</Text>
-                    </TouchableOpacity>
-                }
+    const renderItem = ({ item }) => (
+        <View style={[styles.taskContainer, { borderBottomColor: getImportanceColor(item.importance) }]}>
+            <Text style={styles.taskName}>{item.name}</Text>
+            <Text style={styles.taskDescription}>{item.description}</Text>
+            <View style={styles.dateContainer}>
+                <Text style={styles.dateLabel}>Creada:</Text>
+                <Text style={styles.taskDate}>{item.creation_date}</Text>
             </View>
-    )
-    }
-    return(
-        <View style = {styles.container} >
-            <Text>¿Que pendientes hay?</Text>
-                {agregarTarea &&
-                    <View style={styles.inputContainer}>
-                        <TextInput 
-                        style={styles.textInput}
-                        placeholder='Agregar nueva tarea'
-                        onChangeText={(t)=> setText(t)}
-                        value={text}
-                        />
-                        <TouchableOpacity
-                        style={styles.button}
-                        onPress={addTask}
-                        ><Text>Agregar</Text></TouchableOpacity>
-                    </View>
-                }
-            
-            <View style= {styles.scrollContainer}>
-                <FlatList
-                data={tasks}
-                renderItem={renderItem}/>
+            <View style={styles.dateContainer}>
+                <Text style={styles.dateLabel}>Vencimiento:</Text>
+                <Text style={styles.taskDate}>{item.due_date}</Text>
             </View>
-            <Footer onPress={startToAdd}/>
+            <View style={styles.categoryContainer}>
+                <Text style={styles.taskCategory}>Categoría: {item.category}</Text>
+            </View>
         </View>
-    )
-}
+    );
+
+    return (
+        <View style={styles.container}>
+            <FlatList
+                data={tasks}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id.toString()}
+                contentContainerStyle={styles.taskList}
+            />
+
+            <Footer userId={userId} />
+        </View>
+    );
+};
+
+const getImportanceColor = (importance) => {
+    switch (importance.toLowerCase()) {
+        case 'low':
+            return '#2ecc71'; // Verde
+        case 'medium':
+            return '#3498db'; // Azul
+        case 'high':
+            return '#e74c3c'; // Rojo
+        default:
+            return '#ccc'; // Color por defecto
+    }
+};
 
 const styles = StyleSheet.create({
-    container:{
+    container: {
         marginTop: Constants.statusBarHeight, 
-        flexGrow: 1,
-       
-
-        width: '100%'
+        flex: 1,
+        paddingHorizontal: 20,
+        paddingVertical: 20,
     },
-    textInput:{
-        borderColor: '#574171',
-        backgroundColor: '#F3F1F8',
-        borderWidth: 2,
-        width: Dimensions.get('screen').width *0.6,
-        height:40,
-        margin: 10,
-        paddingLeft: 10,
-        borderRadius: 10
+    taskList: {
+        paddingBottom: 70, // Espacio adicional en la parte inferior para evitar solapamiento con el botón
     },
-    inputContainer:{
-        margin: 20,
-        flexDirection: 'row',
+    taskContainer: {
+        backgroundColor: '#fff',
+        borderRadius: 10,
+        marginBottom: 15,
+        padding: 15,
+        elevation: 3,
+        borderBottomWidth: 4,
     },
-    button:{
-        justifyContent: 'center',
-        alignItems: 'center',
-        width: Dimensions.get('screen').width *0.2,
-        backgroundColor: '#715CF8',
-        height: 40,
-        marginVertical: 10,
-        borderRadius: 10
-    },
-    scrollContainer:{
-        marginTop: 20
-    },
-    itemContainer:{
-        paddingVertical:10,
-        borderBottomColor: '#574171' ,
-        borderBottomWidth:1,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginHorizontal: 10
-    },
-    text:{
+    taskName: {
         fontSize: 16,
-        color: '#6f6f6f'
+        fontWeight: 'bold',
+        marginBottom: 5,
     },
-    textDone:{
-        fontSize: 16,
-        color: '#6f6f6f',
-        textDecorationLine: 'line-through',
-        color: 'red'
+    taskDescription: {
+        fontSize: 14,
+        marginBottom: 5,
     },
-    removeButton:{
-        backgroundColor: 'red',
-        justifyContent: 'center',
+    dateContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
-        borderRadius: 8,
-        paddingHorizontal: 15,
-        color: 'white'
-
-    }
-})
+        marginBottom: 5,
+    },
+    dateLabel: {
+        fontSize: 12,
+        marginRight: 5,
+        color: '#888',
+    },
+    taskDate: {
+        fontSize: 12,
+        color: '#888',
+    },
+    categoryContainer: {
+        marginTop: 10,
+        paddingHorizontal: 5,
+    },
+    taskCategory: {
+        fontSize: 12,
+    },
+    addButton: {
+        position: 'absolute',
+        bottom: 20,
+        alignSelf: 'center',
+        backgroundColor: '#3498db',
+        borderRadius: 50,
+        paddingVertical: 15,
+        paddingHorizontal: 30,
+        elevation: 3,
+    },
+    addButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+});
 
 export default HomeScreen;

@@ -10,7 +10,7 @@ var _controllers = require("../controllers/controllers");
 
 var router = (0, _express.Router)();
 router.post('/register', _controllers.createUser);
-router.get('/login', _controllers.getUser);
+router.post('/login', _controllers.getUser);
 router["delete"]('/:idUser/delete', _controllers.deleteUser);
 router.post('/:id/task/create', _controllers.saveTask);
 router.get('/:id/tasks', _controllers.getAllTasks);
