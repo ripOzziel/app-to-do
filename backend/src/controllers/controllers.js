@@ -289,7 +289,7 @@ export const updateTask = async (req, res) => {
             return res.status(400).json({
                 message: "No se proporcionaron campos válidos para actualizar"
             });
-        }
+        }registro
 
         const [result] = await connection.query(
             "UPDATE tasks SET ? WHERE id = ? AND user_id = ?",

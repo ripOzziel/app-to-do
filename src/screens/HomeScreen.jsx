@@ -33,9 +33,9 @@ const HomeScreen = ({ route, navigation }) => {
         }
     };
 
-    const updateTaskHandler = async (taskId) => {
-        console.log('id de la tarea a actualizar ', taskId);
-        navigation.navigate('FormTask', { userId: userId, taskId: taskId });
+    const updateTaskHandler = async (task) => {
+        console.log('id de la tarea a actualizar ', task.id);
+        navigation.navigate('FormTask', { userId: userId, taskToUpdate: task });
     }
 
     useEffect(() => {
@@ -70,7 +70,7 @@ const HomeScreen = ({ route, navigation }) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.actionButton}
-                            onPress={() => updateTaskHandler(item.id)}
+                            onPress={() => updateTaskHandler(item)}
                         >
                             <Text style={styles.actionButtonText}>Actualizar</Text>
                         </TouchableOpacity>
