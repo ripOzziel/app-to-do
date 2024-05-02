@@ -90,8 +90,8 @@ export const getUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
     try {
         const userId = req.params.idUser;
-		/*
-		! LO MISMO Q ENLA FUNCION DE ABAJO
+		
+	
         if (!req.user) {
             return res.status(401).json({
                 message: "autentifica antes de eliminar la cuenta"
@@ -104,7 +104,7 @@ export const deleteUser = async (req, res) => {
             return res.status(403).json({
                 message: "no estás autorizado para eliminar la cuenta de otro usuario"
             });
-        }*/
+        }
 
         const connection = await connect();
         const [result] = await connection.query(

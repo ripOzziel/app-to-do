@@ -1,4 +1,4 @@
-const API = "http://192.168.1.102:3000"; //! aqui va la direccion ip q tiene tu compu seguido del puerto 3000, si le dejaba la q tenia el video el servidor tardaba mucho en responder pq kien sabe
+const API = "http://192.168.1.76:3000"; //! aqui va la direccion ip q tiene tu compu seguido del puerto 3000, si le dejaba la q tenia el video el servidor tardaba mucho en responder pq kien sabe
 
 export const createUser = async (userData) => { // userData sera los campos q ingrese el usuario, los datos pues
     const res = await fetch(`${API}/register`, { // fetch a la ruta donde se ejecuta la funcion q queremos
@@ -65,8 +65,21 @@ export const getAllTask = async (userId) => {
 }
 
 export const deleteTask = async (userId, taskId) => {
-    //TODO: LLENAR FUNCION
     console.log('aqui ira el contenido de la funcion para eliminar tareas')
+    console.log(userId)
+    const res = await fetch(`${API}/${userId}/task/${taskId}/delete`, {
+        method: "DELETE",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+    });
+
+    if (!res.ok) {
+        throw new Error(`Error al crear tarea: ${res.statusText}`);
+    }
+
+    return await res.json();
 }
 
 export const updateTask = async (userId, taskId, taskData) => {

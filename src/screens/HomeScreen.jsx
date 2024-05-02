@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import  Constants  from 'expo-constants';
-import { View, Text, StyleSheet, FlatList } from 'react-native'
+import { View, Text, StyleSheet, FlatList, Touchable } from 'react-native'
 import Footer from '../components/Footer.jsx';
-import { getAllTask } from '../../api.js';
+import { getAllTask, deleteTask } from '../../api.js';
+import { TouchableOpacity } from 'react-native-web';
 
 const HomeScreen = ({ route }) => {
+   // const taskId = route.params?.taskId;
     const userId = route.params?.userId;
     const [tasks, setTasks] = useState([]);
+    //const [taskId, setTaskId] = useState(0)
 
     const fetchTasks = async () => {
         try {
@@ -17,25 +20,57 @@ const HomeScreen = ({ route }) => {
         }
     };
 
+    const deleteTasks = async (taskId) =>
+    {
+        console.log("id de tarea: "+taskId)
+        try {
+            
+            await deleteTask(userId, taskId);
+            fetchTasks()
+        } catch (error) {
+            console.error('Error al eliminar las tareas:', error);
+        }
+    }
     useEffect(() => {
         fetchTasks();
     }, []);
 
+    const markDone = (task) => {
+        const tmp = [...tasks];
+        const index = tmp.findIndex(el =>el.name === task.name);
+        const todo = tasks[index]
+        //setTaskId(todo.id)
+        todo.completed = !todo.completed
+        console.log(todo.id)
+        setTasks(tmp)
+        //console.log(taskId)
+        
+        
+    }
     const renderItem = ({ item }) => (
         <View style={[styles.taskContainer, { borderBottomColor: getImportanceColor(item.importance) }]}>
-            <Text style={styles.taskName}>{item.name}</Text>
-            <Text style={styles.taskDescription}>{item.description}</Text>
-            <View style={styles.dateContainer}>
-                <Text style={styles.dateLabel}>Creada:</Text>
-                <Text style={styles.taskDate}>{item.creation_date}</Text>
-            </View>
-            <View style={styles.dateContainer}>
-                <Text style={styles.dateLabel}>Vencimiento:</Text>
-                <Text style={styles.taskDate}>{item.due_date}</Text>
-            </View>
-            <View style={styles.categoryContainer}>
-                <Text style={styles.taskCategory}>Categoría: {item.category}</Text>
-            </View>
+            <TouchableOpacity onPress={() => markDone(item)}>
+                <Text style={item.completed ? styles.taskNameDone : styles.taskName}>{item.name}</Text>
+                <Text style={styles.taskDescription}>{item.id}</Text>
+                <View style={styles.dateContainer}>
+                    <Text style={styles.dateLabel}>Creada:</Text>
+                    <Text style={styles.taskDate}>{item.creation_date}</Text>
+                </View>
+                <View style={styles.dateContainer}>
+                    <Text style={styles.dateLabel}>Vencimiento:</Text>
+                    <Text style={styles.taskDate}>{item.due_date}</Text>
+                </View>
+                <View style={styles.categoryContainer}>
+                    <Text style={styles.taskCategory}>Categoría: {item.category}</Text>
+                </View>
+            </TouchableOpacity>
+                {
+                item.completed && (
+                    <TouchableOpacity style={styles.deleteButton}>
+                        <Text style={styles.deleteButtonText} onPress={() =>deleteTasks(item.id)}>Eliminar</Text>
+                    </TouchableOpacity>
+                )
+                }
         </View>
     );
 
@@ -79,6 +114,8 @@ const styles = StyleSheet.create({
     },
     taskContainer: {
         backgroundColor: '#fff',
+        flexDirection:'row',
+        justifyContent:'space-between',
         borderRadius: 10,
         marginBottom: 15,
         padding: 15,
@@ -89,6 +126,13 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
+    },
+    taskNameDone: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        marginBottom: 5,
+        textDecorationLine: 'line-through',
+        color: 'red'
     },
     taskDescription: {
         fontSize: 14,
@@ -129,6 +173,20 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
+    deleteButton: {
+        paddingHorizontal: 15,
+        alignItems: 'center',
+        justifyContent: 'center',
+        
+        backgroundColor: 'red',
+        borderRadius: 20,
+       
+        
+    },
+    deleteButtonText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    }
 });
 
 export default HomeScreen;
