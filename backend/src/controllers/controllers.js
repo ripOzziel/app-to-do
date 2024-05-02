@@ -206,6 +206,34 @@ export const getAllTasks = async (req, res)=>{
     }
 }
 
+export const getTaskById = async (req, res)=> {
+    try {
+        const userId = req.params.id;
+        const taskId = req.params.idTask;
+        const connection = await connect();
+        const [rows] = await connection.query(
+            "SELECT * FROM tasks WHERE id =? AND user_id = ?", [taskId, userId]
+        );
+
+		if(rows.length == 0) { 
+            return res.status(401).json({
+                message: "No hay nada por hacer"
+            });
+        }
+
+        return res.status(200).json({
+            message: "tareas encontradas",
+            tasks: rows
+        });
+
+    } catch(err) {
+        console.log('error ', err);
+        return res.status(500).json({
+            message: "error interno en el server pa"
+        });
+    }
+}
+
 export const deleteTask = async (req, res) => {
 	try{
 		const userId = req.params.idUser;

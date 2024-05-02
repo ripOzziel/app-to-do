@@ -5,6 +5,7 @@ import Login from './src/screens/Login.jsx';
 import Welcome from './src/screens/Welcome.jsx';
 import Registro from './src/screens/Registro.jsx';
 import HomeScreen from './src/screens/HomeScreen.jsx';
+import FormTask from './src/screens/FormTask.jsx';
 
 export default function App() {
 
@@ -28,8 +29,11 @@ export default function App() {
             name="HomeScreen"
             component = {HomeScreen} 
             options={{headerShown:false}}  />
+        <Stack.Screen
+            name="FormTask"
+            component = {FormTask} 
+            options={{headerShown:false}}  />
       </Stack.Navigator>
-
     </NavigationContainer>
   );
 }

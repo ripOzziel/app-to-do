@@ -39,6 +39,9 @@ Content-Type: application/json
 GET {{api}}/1/tasks
 
 ###
+GET {{api}}/1/40/showTask
+
+###
 DELETE {{api}}/1/task/4/delete
 
 ###

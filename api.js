@@ -1,4 +1,4 @@
-const API = "http://192.168.1.76:3000"; //! aqui va la direccion ip q tiene tu compu seguido del puerto 3000, si le dejaba la q tenia el video el servidor tardaba mucho en responder pq kien sabe
+const API = "http://192.168.1.121:3000"; //! aqui va la direccion ip q tiene tu compu seguido del puerto 3000, si le dejaba la q tenia el video el servidor tardaba mucho en responder pq kien sabe
 
 export const createUser = async (userData) => { // userData sera los campos q ingrese el usuario, los datos pues
     const res = await fetch(`${API}/register`, { // fetch a la ruta donde se ejecuta la funcion q queremos
@@ -65,12 +65,9 @@ export const getAllTask = async (userId) => {
 }
 
 export const deleteTask = async (userId, taskId) => {
-    console.log('aqui ira el contenido de la funcion para eliminar tareas')
-    console.log(userId)
     const res = await fetch(`${API}/${userId}/task/${taskId}/delete`, {
         method: "DELETE",
         headers: {
-            Accept: "application/json",
             "Content-Type": "application/json",
         },
     });
@@ -82,12 +79,39 @@ export const deleteTask = async (userId, taskId) => {
     return await res.json();
 }
 
+export const getTaskById = async (userId, taskId) => {
+        const res = await fetch(`${API}/${userId}/${taskId}/showTask`, {
+            method: "GET"
+        })
+        const data = await res.json();
+        console.log('Datos de la tarea:', data);
+        return data;
+
+}
+
 export const updateTask = async (userId, taskId, taskData) => {
-    //TODO: LLENAR FUNCION
-    console.log('aqui ira el contenido de la funcion para actualizar tareas')
+    const res = await fetch(`${API}/${userId}/task/${taskId}/update`, {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(taskData)
+    });
+
+    if (!res.ok) {
+        throw new Error(`Error al actualizar tarea: ${res.statusText}`);
+    }
+
+    return await res.json();
 }
 
 export const getTaskByCategory = async (userId, category) => {
-    //TODO: LLENAR FUNCION
-    console.log('aqui ira el contenido de la funcion para obtener tareas por su categoria')
+    const res = await fetch(`${API}/${userId}/tasks/${category}`, {
+        method: "GET"
+    })
+    const data = await res.json();
+    console.log('Datos de las tareas por categoría:', data);
+
+    return data;
 }
