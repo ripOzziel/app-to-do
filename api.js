@@ -1,4 +1,4 @@
-const API = "http://192.168.1.121:3000"; //! aqui va la direccion ip q tiene tu compu seguido del puerto 3000, si le dejaba la q tenia el video el servidor tardaba mucho en responder pq kien sabe
+const API = "http://192.168.1.102:3000"; //! aqui va la direccion ip q tiene tu compu seguido del puerto 3000, si le dejaba la q tenia el video el servidor tardaba mucho en responder pq kien sabe
 
 export const createUser = async (userData) => { // userData sera los campos q ingrese el usuario, los datos pues
     const res = await fetch(`${API}/register`, { // fetch a la ruta donde se ejecuta la funcion q queremos

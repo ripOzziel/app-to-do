@@ -48,10 +48,11 @@ const HomeScreen = ({ route }) => {
                 contentContainerStyle={styles.taskList}
             />
 
-            <Footer userId={userId}  />
+            <Footer userId={userId} onAddTask={fetchTasks} />
         </View>
     );
 };
+
 
 const getImportanceColor = (importance) => {
     switch (importance.toLowerCase()) {

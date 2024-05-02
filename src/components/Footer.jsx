@@ -3,7 +3,7 @@ import { View, Text, Pressable, TextInput, Platform, Alert } from 'react-native'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { saveTask } from "../../api.js";
 
-const Footer = ({ userId}) => {
+const Footer = ({ userId, onAddTask}) => {
     const [expanded, setExpanded] = useState(false);
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
@@ -34,9 +34,10 @@ const Footer = ({ userId}) => {
         console.log('datos de la tarea:', taskData);
         console.log('enviando solicitud de validacion');
         const response = await saveTask(userId, taskData);
-        
+        onAddTask()
         console.log('respuesta del servidor:', response);        
         setExpanded(!expanded)
+
 
         } catch(err) {
             console.log('Error durante el registro:', err); 
