@@ -26,7 +26,7 @@ POST {{api}}/1/task/create
 Content-Type: application/json
 
 {
-    "name": "¿¿¿¿",
+    "name": "test",
     "description": "si yuuuu",
     "creation_date": "2024-04-28",
     "due_date": "2024-05-30",
@@ -45,7 +45,7 @@ GET {{api}}/1/40/showTask
 DELETE {{api}}/1/task/4/delete
 
 ###
-PUT {{api}}/1/task/1/update
+PUT {{api}}/1/task/4/update
 Content-Type: application/json
 
 {

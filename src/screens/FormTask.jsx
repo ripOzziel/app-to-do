@@ -1,23 +1,27 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { saveTask } from "../../api.js";
+import { saveTask, updateTask } from "../../api.js";
 
 const FormTask = ({ route, navigation }) => {
     const userId = route.params?.userId;
-    const onAddTask = route.params?.onAddTask;
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [dueDate, setDueDate] = useState(new Date());
-    const [importance, setImportance] = useState('');
-    const [category, setCategory] = useState('');
+    const taskToUpdate = route.params?.taskToUpdate;
+
+    const defaultDueDate = taskToUpdate?.due_date ? new Date(taskToUpdate.due_date) : new Date();
+    const [title, setTitle] = useState(taskToUpdate?.name || '');
+    const [description, setDescription] = useState(taskToUpdate?.description || '');
+    const [dueDate, setDueDate] = useState(defaultDueDate);
+    const [importance, setImportance] = useState(taskToUpdate?.importance || '');
+    const [category, setCategory] = useState(taskToUpdate?.category || '');
     const [showDatePicker, setShowDatePicker] = useState(false);
 
+
+    
     const addTask = async () => {
-        console.log('ID del usuario:', userId);
         try {
             const currentDate = new Date().toISOString().substring(0, 19).replace('T', ' ');
-            const dueDateFormatted = new Date().toISOString().substring(0, 19).replace('T', ' ');
+            const dueDateFormatted = dueDate.toISOString().substring(0, 19).replace('T', ' ');
+
             const taskData = {
                 name: title,
                 description: description,
@@ -28,21 +32,27 @@ const FormTask = ({ route, navigation }) => {
                 completed: false
             }
 
-            console.log('datos de la tarea:', taskData);
-            console.log('enviando solicitud de validacion');
-            const response = await saveTask(userId, taskData);
-            console.log('respuesta del servidor:', response);
-            onAddTask();
-            navigation.navigate('HomeScreen', { userId: userId});
+            if (taskToUpdate) {
+                const response = await updateTask(userId, taskToUpdate.id, taskData);
+                //onAddTask();
+                console.log('respuesta del servidor:', response);
+            } else {
+                const response = await saveTask(userId, taskData);
+                //onAddTask();
+                console.log('respuesta del servidor:', response);
+            }
+            
+            navigation.navigate('HomeScreen', { userId: userId });
+        
         } catch (err) {
-            console.log('Error durante el registro:', err);
-            Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
+            console.log('Error:', err);
+            //Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
         }
     };
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Agregar Tarea</Text>
+            <Text style={styles.header}>{taskToUpdate ? 'Actualizar Tarea' : 'Agregar Tarea'}</Text>
             <TextInput
                 style={styles.input}
                 placeholder="Título"

@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     creation_date DATE,
     due_date DATE,
     category VARCHAR(100),
-    importance ENUM('Low', 'Medium', 'High'),
+    importance VARCHAR(100),
     completed BOOLEAN DEFAULT FALSE,
     user_id INT,
     PRIMARY KEY (id),

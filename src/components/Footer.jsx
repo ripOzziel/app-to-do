@@ -2,10 +2,10 @@ import React from 'react';
 import { View, Text, Pressable} from 'react-native';
 
 
-const Footer = ({userId, onAddTask, navigation}) => {
+const Footer = ({userId, navigation}) => {
 
     const form = () => {
-        navigation.navigate('FormTask', { userId: userId, onAddTask: onAddTask });
+        navigation.navigate('FormTask', { userId: userId });
     }
 
     return (

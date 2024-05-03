@@ -10,6 +10,23 @@ const HomeScreen = ({ route, navigation }) => {
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     const [category, setCategory] = useState('');
 
+    useEffect(() => {
+        const fetchTasksOnFocus = () => {
+            fetchTasks(); // actualizar tareas al enfocar la pantalla homescreen
+        };
+    
+        const unsubscribeFocus = navigation.addListener('focus', fetchTasksOnFocus);
+        return () => {
+            unsubscribeFocus();
+        };
+    }, [navigation, category]); // este efecto se ejecutará cada vez que cambie la categoría o se enfoque el homescreen
+    
+    useEffect(() => {
+        if (category === '') {
+            fetchTasks();
+        }
+    }, [category]);
+
     const fetchTasks = async () => {
         try {
             let tasksData;
@@ -33,14 +50,9 @@ const HomeScreen = ({ route, navigation }) => {
         }
     };
 
-    const updateTaskHandler = async (taskId) => {
-        console.log('id de la tarea a actualizar ', taskId);
-        navigation.navigate('FormTask', { userId: userId, taskId: taskId });
-    }
-
-    useEffect(() => {
-        fetchTasks();
-    }, [category]);
+    const updateTaskHandler = async (task) => {
+        navigation.navigate('FormTask', { userId: userId, taskToUpdate: task });
+    };
 
     const renderItem = ({ item }) => {
         const isExpanded = item.id === expandedTaskId;
@@ -70,7 +82,7 @@ const HomeScreen = ({ route, navigation }) => {
                         </TouchableOpacity>
                         <TouchableOpacity
                             style={styles.actionButton}
-                            onPress={() => updateTaskHandler(item.id)}
+                            onPress={() => updateTaskHandler(item)}
                         >
                             <Text style={styles.actionButtonText}>Actualizar</Text>
                         </TouchableOpacity>
@@ -99,18 +111,19 @@ const HomeScreen = ({ route, navigation }) => {
                 keyExtractor={(item) => item.id.toString()}
                 contentContainerStyle={styles.taskList}
             />
-            <Footer navigation={navigation} userId={userId} onAddTask={fetchTasks} />
+            <Footer navigation={navigation} userId={userId} />
         </View>
     );
 };
 
+
 const getImportanceColor = (importance) => {
     switch (importance.toLowerCase()) {
-        case 'low':
+        case 'baja':
             return '#2ecc71';
-        case 'medium':
+        case 'media':
             return '#3498db';
-        case 'high':
+        case 'alta':
             return '#e74c3c';
         default:
             return '#ccc';

@@ -9,7 +9,6 @@ const Registro = ({ navigation }) => {
   const [password, setPassword] = React.useState('');
 
   const registerUser = async () => {
-    console.log('funciono'); 
     
     try {
         const userData = {  
@@ -19,16 +18,13 @@ const Registro = ({ navigation }) => {
         };
 
         console.log('datos del usuario:', userData); 
-        
         console.log('enviando solicitud de registro'); 
         const response = await createUser(userData); 
-
         console.log('respuesta del servidor:', response); 
         
         navigation.navigate('Login'); 
     } catch (err) {
-        console.log('Error durante el registro:', err); 
-        Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
+        Alert.alert('Error', err);
     }
 };
 

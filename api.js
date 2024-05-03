@@ -15,20 +15,20 @@ export const createUser = async (userData) => { // userData sera los campos q in
 };
 
 export const getUser = async (userData) => {
-    const res = await fetch(`${API}/login`, {
-        method: "POST",
-        headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(userData)
-    });
-
-    if (!res.ok) {
-        throw new Error(`Error al iniciar sesión: ${res.statusText}`);
-    }
-
-    return await res.json(); 
+        const res = await fetch(`${API}/login`, {
+            method: "POST",
+            headers: {
+                Accept: "application/json",
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(userData)
+        });
+    
+        if (!res.ok) {
+            throw new Error(`Error al iniciar sesión: ${res.statusText}`);
+        }
+    
+        return await res.json(); 
 }
 
 
@@ -91,16 +91,16 @@ export const getTaskById = async (userId, taskId) => {
 
 export const updateTask = async (userId, taskId, taskData) => {
     const res = await fetch(`${API}/${userId}/task/${taskId}/update`, {
-        method: "POST",
+        method: "PUT",
         headers: {
             Accept: "application/json",
             "Content-Type": "application/json",
         },
         body: JSON.stringify(taskData)
     });
-
+    
     if (!res.ok) {
-        throw new Error(`Error al actualizar tarea: ${res.statusText}`);
+        throw new Error(`Error al actualizar tarea: 0`);
     }
 
     return await res.json();

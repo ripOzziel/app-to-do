@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import  Constants  from "expo-constants";
-import { View, Text, Pressable, TextInput, StyleSheet, ImageBackground} from "react-native";
+import { View, Text, Pressable, TextInput, StyleSheet, ImageBackground, Alert} from "react-native";
 import { getUser } from "../../api";
 
 const Login = ({navigation}) => {
@@ -21,19 +21,16 @@ const Login = ({navigation}) => {
 
         console.log('respuesta del servidor:', response);
 
-        if (response && response.user) {// Extraer la ID del usuario de la respuesta
+        if (response && response.user) {
             const userId = response.user.id;
-
             navigation.navigate('HomeScreen', { userId: userId });
         } else {
             Alert.alert('Error', 'Hubo un problema durante el inicio de sesión, por favor inténtalo de nuevo');
         }
     } catch (err) {
-        console.log('Error durante el inicio de sesión:', err);
-        Alert.alert('Error', 'Hubo un problema durante el inicio de sesión, por favor inténtalo de nuevo');
+        Alert.alert('Error', 'correo o contraseña incorrectos');
     }
 };
-
 
     return(
         <ImageBackground
