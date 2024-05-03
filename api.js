@@ -100,7 +100,7 @@ export const updateTask = async (userId, taskId, taskData) => {
     });
     
     if (!res.ok) {
-        throw new Error(`Error al actualizar tarea: 0`);
+        throw new Error(`Error al actualizar tarea`);
     }
 
     return await res.json();
