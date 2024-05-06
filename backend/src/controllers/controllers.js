@@ -150,17 +150,17 @@ export const saveTask = async (req, res) => {
             });
         }*/
 
-        const {name, description, creation_date, due_date, category, importance, completed} = req.body;
-        if(!name || !due_date){
+        const {name, description, creation_date, due_date, due_time, category, importance, completed} = req.body;
+        if(!name || !due_date || !due_time){
             return res.status(400).json({
-                message: "La tarea debe contener un nombre y una fecha de vencimiento"
+                message: "La tarea debe contener un nombre y una fecha de vencimiento y una hora limite"
             });
         }
 
         const connection = await connect();
         const [result] = await connection.query(
-            "INSERT INTO tasks (name, description, creation_date, due_date, category, importance, completed, user_id) VALUES (?,?,?,?,?,?,?,?)",
-            [name, description, creation_date, due_date, category, importance, completed, userId]
+            "INSERT INTO tasks (name, description, creation_date, due_date, due_time, category, importance, completed, user_id) VALUES (?,?,?,?,?,?,?,?,?)",
+            [name, description, creation_date, due_date, due_time, category, importance, completed, userId]
         );
    
         return result.affectedRows === 1?
@@ -264,7 +264,7 @@ export const updateTask = async (req, res) => {
     try {
         const userId = req.params.idUser;
         const taskId = req.params.idTask;
-        const { name, description, creation_date, due_date, category, importance, completed } = req.body;
+        const { name, description, creation_date, due_date, due_time, category, importance, completed } = req.body;
 
         const connection = await connect();
         const [rows] = await connection.query(
@@ -281,6 +281,7 @@ export const updateTask = async (req, res) => {
         if (description !== undefined) fieldsToUpdate.description = description;
         if (creation_date !== undefined) fieldsToUpdate.creation_date = creation_date;
         if (due_date !== undefined) fieldsToUpdate.due_date = due_date;
+        if(due_time !== undefined){fieldsToUpdate.due_time= due_time}
         if (category !== undefined) fieldsToUpdate.category = category;
         if (importance !== undefined) fieldsToUpdate.importance = importance;
         if (completed !== undefined) fieldsToUpdate.completed = completed;

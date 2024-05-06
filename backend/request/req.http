@@ -10,7 +10,7 @@ Content-Type: application/json
 }
 
 ###
-GET {{api}}/login
+POST {{api}}/login
 Content-Type: application/json
 
 {
@@ -30,6 +30,7 @@ Content-Type: application/json
     "description": "si yuuuu",
     "creation_date": "2024-04-28",
     "due_date": "2024-05-30",
+    "due_time": "08:30:00",
     "category": "turtle",
     "importance": "High",
     "completed": false
@@ -45,11 +46,11 @@ GET {{api}}/1/40/showTask
 DELETE {{api}}/1/task/4/delete
 
 ###
-<<<<<<< HEAD
 PUT {{api}}/1/task/4/update
-=======
+
+###
 PUT {{api}}/1/task/6/update
->>>>>>> 67c0f91435545070cdc9dd06a7df1664bb5e6276
+
 Content-Type: application/json
 
 {

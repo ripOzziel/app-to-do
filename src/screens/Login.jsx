@@ -34,7 +34,7 @@ const Login = ({navigation}) => {
 
     return(
         <ImageBackground
-        source={require('../../public/img/fondo2.png')} // Ruta de la imagen
+        source={require('../../public/img/fondo2.png')} 
         style={styles.backgroundImage}
         >
         <View style = {styles.container} >
@@ -53,6 +53,7 @@ const Login = ({navigation}) => {
             <TextInput 
                 style={styles.inputs}
                 placeholder = '**********'
+                secureTextEntry={true}
                 value={password}
                 onChangeText={setPassword}
                 />    
@@ -64,8 +65,8 @@ const Login = ({navigation}) => {
             </Pressable>
         </View>
         </ImageBackground>
-    )
-}
+    );
+};
 
 const styles = StyleSheet.create({
     container:{
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     },
     backgroundImage: {
         flex: 1,
-        resizeMode: 'cover', // Ajusta la imagen al tamaño del contenedor
+        resizeMode: 'cover',
         justifyContent: 'center',
       },
       title:{
@@ -92,12 +93,10 @@ const styles = StyleSheet.create({
         width: '60%',
         height: 40,
         paddingLeft: 10
-
       },
       texts:{
         paddingVertical: 20,
         fontSize: 20
-
       },
       buton:{
         backgroundColor: '#715CF8',
@@ -106,10 +105,7 @@ const styles = StyleSheet.create({
         borderRadius: 20, 
         marginVertical: 20, 
         alignItems: 'center',
-        
       }
-     
-
-})
+});
 
 export default Login;

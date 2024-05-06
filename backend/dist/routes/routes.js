@@ -14,6 +14,7 @@ router.post('/login', _controllers.getUser);
 router["delete"]('/:idUser/delete', _controllers.deleteUser);
 router.post('/:id/task/create', _controllers.saveTask);
 router.get('/:id/tasks', _controllers.getAllTasks);
+router.get('/:id/:idTask/showTask', _controllers.getTaskById);
 router["delete"]('/:idUser/task/:idTask/delete', _controllers.deleteTask);
 router.put('/:idUser/task/:idTask/update', _controllers.updateTask);
 router.get('/:idUser/tasks/:category', _controllers.getTaskByCategory);

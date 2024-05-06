@@ -16,6 +16,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     description TEXT,
     creation_date DATE,
     due_date DATE,
+    due_time TIME,
     category VARCHAR(100),
     importance VARCHAR(100),
     completed BOOLEAN DEFAULT FALSE,

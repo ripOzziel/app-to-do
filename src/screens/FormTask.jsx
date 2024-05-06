@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { saveTask, updateTask } from "../../api.js";
 
@@ -11,12 +11,11 @@ const FormTask = ({ route, navigation }) => {
     const [title, setTitle] = useState(taskToUpdate?.name || '');
     const [description, setDescription] = useState(taskToUpdate?.description || '');
     const [dueDate, setDueDate] = useState(defaultDueDate);
+    const [due_time, setDueTime] = useState(taskToUpdate?.due_time || '');
     const [importance, setImportance] = useState(taskToUpdate?.importance || '');
     const [category, setCategory] = useState(taskToUpdate?.category || '');
     const [showDatePicker, setShowDatePicker] = useState(false);
 
-
-    
     const addTask = async () => {
         try {
             const currentDate = new Date().toISOString().substring(0, 19).replace('T', ' ');
@@ -27,6 +26,7 @@ const FormTask = ({ route, navigation }) => {
                 description: description,
                 creation_date: currentDate,
                 due_date: dueDateFormatted,
+                due_time: due_time,
                 category: category,
                 importance: importance,
                 completed: false
@@ -34,21 +34,18 @@ const FormTask = ({ route, navigation }) => {
 
             if (taskToUpdate) {
                 const response = await updateTask(userId, taskToUpdate.id, taskData);
-                //onAddTask();
                 console.log('respuesta del servidor:', response);
             } else {
                 const response = await saveTask(userId, taskData);
-                //onAddTask();
                 console.log('respuesta del servidor:', response);
             }
             
             navigation.navigate('HomeScreen', { userId: userId });
-        
         } catch (err) {
-            console.log('Error:', err);
-            //Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
+            Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
         }
     };
+
 
     return (
         <View style={styles.container}>
@@ -91,6 +88,13 @@ const FormTask = ({ route, navigation }) => {
             )}
             <TextInput
                 style={styles.input}
+                placeholder="Hora limite"
+                defaultValue=''
+                value={due_time}
+                onChangeText={setDueTime}
+            />
+            <TextInput
+                style={styles.input}
                 placeholder="Importancia"
                 defaultValue=''
                 value={importance}
@@ -106,7 +110,7 @@ const FormTask = ({ route, navigation }) => {
             <TouchableOpacity style={styles.saveButton} onPress={addTask}>
                 <Text style={styles.buttonText}>Guardar</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.cancelButton} onPress={() => console.log('Cancelar')}>
+            <TouchableOpacity style={styles.cancelButton} onPress={() => navigation.navigate('HomeScreen', { userId: userId })}>
                 <Text style={styles.buttonText}>Cancelar</Text>
             </TouchableOpacity>
         </View>

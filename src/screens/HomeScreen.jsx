@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import Footer from '../components/Footer.jsx';
 import { getAllTask, deleteTask, getTaskByCategory } from '../../api.js';
@@ -22,9 +22,7 @@ const HomeScreen = ({ route, navigation }) => {
     }, [navigation, category]); // este efecto se ejecutará cada vez que cambie la categoría o se enfoque el homescreen
     
     useEffect(() => {
-        if (category === '') {
-            fetchTasks();
-        }
+        if (category === '') { fetchTasks(); }
     }, [category]);
 
     const fetchTasks = async () => {
@@ -36,8 +34,8 @@ const HomeScreen = ({ route, navigation }) => {
                 tasksData = await getAllTask(userId);
             }
             setTasks(tasksData.tasks);
-        } catch (error) {
-            console.error('Error al obtener las tareas:', error);
+        } catch (err) {
+            Alert.alert('Error ', err);
         }
     };
 
@@ -45,8 +43,8 @@ const HomeScreen = ({ route, navigation }) => {
         try {
             await deleteTask(userId, taskId);
             fetchTasks();
-        } catch (error) {
-            console.error('Error al eliminar la tarea:', error);
+        } catch (err) {
+            Alert.alert('Error ', err);
         }
     };
 
@@ -72,6 +70,7 @@ const HomeScreen = ({ route, navigation }) => {
                     <Text style={styles.dateLabel}>Vencimiento:</Text>
                     <Text style={styles.taskDate}>{item.due_date}</Text>
                 </View>
+                <Text style={styles.taskDate}>Hora limite: {item.due_time}</Text>
                 {isExpanded && (
                     <View style={styles.actionButtonsContainer}>
                         <TouchableOpacity
