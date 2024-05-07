@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { saveTask, updateTask } from "../../api.js";
 
 const FormTask = ({ route, navigation }) => {
@@ -8,29 +8,35 @@ const FormTask = ({ route, navigation }) => {
     const taskToUpdate = route.params?.taskToUpdate;
 
     const defaultDueDate = taskToUpdate?.due_date ? new Date(taskToUpdate.due_date) : new Date();
+    const defaultDueTime = taskToUpdate?.due_time ? new Date(taskToUpdate.due_time) : new Date();
+    
     const [title, setTitle] = useState(taskToUpdate?.name || '');
     const [description, setDescription] = useState(taskToUpdate?.description || '');
     const [dueDate, setDueDate] = useState(defaultDueDate);
-    const [due_time, setDueTime] = useState(taskToUpdate?.due_time || '');
+    const [dueTime, setDueTime] = useState(defaultDueTime);
     const [importance, setImportance] = useState(taskToUpdate?.importance || '');
     const [category, setCategory] = useState(taskToUpdate?.category || '');
-    const [showDatePicker, setShowDatePicker] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
 
     const addTask = async () => {
         try {
             const currentDate = new Date().toISOString().substring(0, 19).replace('T', ' ');
             const dueDateFormatted = dueDate.toISOString().substring(0, 19).replace('T', ' ');
+            const dueTimeFormatted = dueTime.getHours() + ':' + dueTime.getMinutes() + ':' + dueTime.getSeconds();
 
             const taskData = {
                 name: title,
                 description: description,
                 creation_date: currentDate,
                 due_date: dueDateFormatted,
-                due_time: due_time,
+                due_time: dueTimeFormatted,
                 category: category,
                 importance: importance,
                 completed: false
             }
+
+            console.log('limite hora ', taskData.due_time)
 
             if (taskToUpdate) {
                 const response = await updateTask(userId, taskToUpdate.id, taskData);
@@ -43,9 +49,22 @@ const FormTask = ({ route, navigation }) => {
             navigation.navigate('HomeScreen', { userId: userId });
         } catch (err) {
             Alert.alert('Error', 'Hubo un problema durante el registro, intentalo de nuevo ', err);
-        }
+        } 
     };
 
+    const showDatePicker = () => { setDatePickerVisibility(true);  };
+    const hideDatePicker = () => { setDatePickerVisibility(false); };
+    const handleDateConfirm = (date) => {
+        setDueDate(date);
+        hideDatePicker();
+    };
+
+    const showTimePicker = () => { setTimePickerVisibility(true); };
+    const hideTimePicker = () => { setTimePickerVisibility(false);};
+    const handleTimeConfirm = (time) => {
+        setDueTime(time);
+        hideTimePicker();
+    };
 
     return (
         <View style={styles.container}>
@@ -53,57 +72,48 @@ const FormTask = ({ route, navigation }) => {
             <TextInput
                 style={styles.input}
                 placeholder="Título"
-                defaultValue=''
                 value={title}
                 onChangeText={setTitle}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Descripción"
-                defaultValue=''
                 value={description}
                 onChangeText={setDescription}
             />
             <TouchableOpacity
                 style={styles.input}
-                onPress={() => setShowDatePicker(true)}
+                onPress={showDatePicker}
             >
                 <Text>Fecha de vencimiento: {dueDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
-            {showDatePicker && (
-                <DateTimePicker
-                    testID="dateTimePicker"
-                    value={dueDate}
-                    defaultValue=''
-                    mode="date"
-                    is24Hour={true}
-                    display="default"
-                    onChange={(event, selectedDate) => {
-                        setShowDatePicker(false);
-                        if (selectedDate) {
-                            setDueDate(selectedDate);
-                        }
-                    }}
-                />
-            )}
-            <TextInput
+            <DateTimePickerModal
+                isVisible={isDatePickerVisible}
+                mode="date"
+                onConfirm={handleDateConfirm}
+                onCancel={hideDatePicker}
+            />
+            <TouchableOpacity
                 style={styles.input}
-                placeholder="Hora limite"
-                defaultValue=''
-                value={due_time}
-                onChangeText={setDueTime}
+                onPress={showTimePicker}
+            >
+                <Text>Hora límite: {dueTime.toLocaleTimeString()}</Text>
+            </TouchableOpacity>
+            <DateTimePickerModal
+                isVisible={isTimePickerVisible}
+                mode="time"
+                onConfirm={handleTimeConfirm}
+                onCancel={hideTimePicker}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Importancia"
-                defaultValue=''
                 value={importance}
                 onChangeText={setImportance}
             />
             <TextInput
                 style={styles.input}
                 placeholder="Categoría"
-                defaultValue=''
                 value={category}
                 onChangeText={setCategory}
             />
@@ -116,6 +126,7 @@ const FormTask = ({ route, navigation }) => {
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

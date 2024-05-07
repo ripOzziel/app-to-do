@@ -281,7 +281,7 @@ export const updateTask = async (req, res) => {
         if (description !== undefined) fieldsToUpdate.description = description;
         if (creation_date !== undefined) fieldsToUpdate.creation_date = creation_date;
         if (due_date !== undefined) fieldsToUpdate.due_date = due_date;
-        if(due_time !== undefined){fieldsToUpdate.due_time= due_time}
+        if (due_time !== undefined) fieldsToUpdate.due_time= due_time;
         if (category !== undefined) fieldsToUpdate.category = category;
         if (importance !== undefined) fieldsToUpdate.importance = importance;
         if (completed !== undefined) fieldsToUpdate.completed = completed;
@@ -312,7 +312,6 @@ export const updateTask = async (req, res) => {
         });
     }
 }
-
 
 export const getTaskByCategory = async (req, res) =>{
     try {

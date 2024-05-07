@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, TextInput, Alert } from 'react-native';
 import Constants from 'expo-constants';
 import Footer from '../components/Footer.jsx';
 import { getAllTask, deleteTask, getTaskByCategory } from '../../api.js';
@@ -91,6 +91,43 @@ const HomeScreen = ({ route, navigation }) => {
         );
     };
 
+    const categorizeTask = (task) => {
+        const today = new Date();
+        const dueDate = new Date(task.due_date);
+        const tomorrow = new Date(today);
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        const endOfWeek = new Date(today);
+        endOfWeek.setDate(endOfWeek.getDate() + (7 - today.getDay()));
+        
+        if (dueDate.toDateString() === today.toDateString()) {
+            return 'HOY';
+        } else if (dueDate.toDateString() === tomorrow.toDateString()) {
+            return 'MAÑANA';
+        } else if (dueDate <= endOfWeek) {
+            return 'ESTA SEMANA';
+        } else {
+            return 'DESPUÉS';
+        }
+    };
+
+    const organizedTasks = tasks ? tasks.reduce((acc, task) => {
+        const category = categorizeTask(task);
+        if (!acc[category]) {
+            acc[category] = [];
+        }
+        acc[category].push(task);
+        return acc;
+    }, {}) : {};
+
+    // Convertir las tareas organizadas en un array de objetos de sección para SectionList
+    const sections = Object.keys(organizedTasks).map(category => ({
+        title: category,
+        data: organizedTasks[category],
+    }));
+
+
+
     return (
         <View style={styles.container}>
             <View style={styles.inputContainer}>
@@ -104,11 +141,15 @@ const HomeScreen = ({ route, navigation }) => {
                     <Text style={styles.searchButtonText}>Buscar</Text>
                 </TouchableOpacity>
             </View>
-            <FlatList
-                data={tasks}
+            <SectionList
+                sections={sections}
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
-                contentContainerStyle={styles.taskList}
+                renderSectionHeader={({ section: { title } }) => (
+                    <View style={styles.sectionHeader}>
+                        <Text style={styles.sectionHeaderText}>{title}</Text>
+                    </View>
+                )}
             />
             <Footer navigation={navigation} userId={userId} />
         </View>
