@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import {Picker} from '@react-native-picker/picker';
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { saveTask, updateTask } from "../../api.js";
 
@@ -18,6 +19,7 @@ const FormTask = ({ route, navigation }) => {
     const [category, setCategory] = useState(taskToUpdate?.category || '');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
+    const [isPickerVisible, setPickerVisible] = useState(false);
 
     const addTask = async () => {
         try {
@@ -66,6 +68,16 @@ const FormTask = ({ route, navigation }) => {
         hideTimePicker();
     };
 
+    const handlePickerVisibility = () => {
+        setPickerVisible(true);
+    };
+
+    const handlePickerChange = (itemValue, itemIndex) => {
+        setImportance(itemValue)
+        setPickerVisible(false); // Oculta el picker cuando se selecciona un valor
+    };
+
+
     return (
         <View style={styles.container}>
             <Text style={styles.header}>{taskToUpdate ? 'Actualizar Tarea' : 'Agregar Tarea'}</Text>
@@ -105,12 +117,22 @@ const FormTask = ({ route, navigation }) => {
                 onConfirm={handleTimeConfirm}
                 onCancel={hideTimePicker}
             />
-            <TextInput
-                style={styles.input}
-                placeholder="Importancia"
-                value={importance}
-                onChangeText={setImportance}
-            />
+            
+                <TouchableOpacity style={styles.input} onPress={handlePickerVisibility}>
+                <Text>Seleccionar: {importance}</Text>
+            </TouchableOpacity>
+            {isPickerVisible && (
+                <Picker
+                    selectedValue={importance}
+                    onValueChange={handlePickerChange}
+                >
+                    <Picker.Item label="Baja" value="baja" />
+                    <Picker.Item label="Media" value="media" />
+                    <Picker.Item label="Alta" value="alta" />
+                </Picker>
+            )}
+
+       
             <TextInput
                 style={styles.input}
                 placeholder="Categoría"
@@ -148,6 +170,17 @@ const styles = StyleSheet.create({
         paddingHorizontal: 10,
         justifyContent: 'center',
     },
+    importancia: {
+        height: 80,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        marginBottom: 10,
+        paddingVertical: 10,
+        justifyContent: 'center',
+        paddingHorizontal: 10,
+       
+    },
     saveButton: {
         backgroundColor: '#715CF8',
         paddingVertical: 12,
@@ -166,6 +199,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         fontSize: 16,
     },
+    
 });
+
 
 export default FormTask;

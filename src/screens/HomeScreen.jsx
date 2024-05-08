@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, TextInput, Alert } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, TextInput, Alert, Image } from 'react-native';
 import Constants from 'expo-constants';
 import Footer from '../components/Footer.jsx';
 import { getAllTask, deleteTask, getTaskByCategory } from '../../api.js';
@@ -12,14 +12,14 @@ const HomeScreen = ({ route, navigation }) => {
 
     useEffect(() => {
         const fetchTasksOnFocus = () => {
-            fetchTasks(); // actualizar tareas al enfocar la pantalla homescreen
+            fetchTasks();
         };
     
         const unsubscribeFocus = navigation.addListener('focus', fetchTasksOnFocus);
         return () => {
             unsubscribeFocus();
         };
-    }, [navigation, category]); // este efecto se ejecutará cada vez que cambie la categoría o se enfoque el homescreen
+    }, [navigation, category]);
     
     useEffect(() => {
         if (category === '') { fetchTasks(); }
@@ -61,7 +61,7 @@ const HomeScreen = ({ route, navigation }) => {
             >
                 <Text style={styles.taskName}>{item.name}</Text>
                 <Text style={styles.taskDescription}>{item.description}</Text>
-                <Text style={styles.taskDescription}>categoria: {item.category}</Text>
+                <Text style={styles.taskDescription}>Categoria: {item.category}</Text>
                 <View style={styles.dateContainer}>
                     <Text style={styles.dateLabel}>Creada:</Text>
                     <Text style={styles.taskDate}>{item.creation_date}</Text>
@@ -74,13 +74,13 @@ const HomeScreen = ({ route, navigation }) => {
                 {isExpanded && (
                     <View style={styles.actionButtonsContainer}>
                         <TouchableOpacity
-                            style={styles.actionButton}
+                            style={[styles.actionButton, styles.deleteButton]}
                             onPress={() => deleteTaskHandler(item.id)}
                         >
                             <Text style={styles.actionButtonText}>Eliminar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={styles.actionButton}
+                            style={[styles.actionButton, styles.updateButton]}
                             onPress={() => updateTaskHandler(item)}
                         >
                             <Text style={styles.actionButtonText}>Actualizar</Text>
@@ -120,13 +120,10 @@ const HomeScreen = ({ route, navigation }) => {
         return acc;
     }, {}) : {};
 
-    // Convertir las tareas organizadas en un array de objetos de sección para SectionList
     const sections = Object.keys(organizedTasks).map(category => ({
         title: category,
         data: organizedTasks[category],
     }));
-
-
 
     return (
         <View style={styles.container}>
@@ -138,7 +135,7 @@ const HomeScreen = ({ route, navigation }) => {
                     onChangeText={setCategory}
                 />
                 <TouchableOpacity style={styles.searchButton} onPress={fetchTasks}>
-                    <Text style={styles.searchButtonText}>Buscar</Text>
+                    <Image source = {require('../../public/img/lupa.png')} style={styles.icon}/>
                 </TouchableOpacity>
             </View>
             <SectionList
@@ -172,30 +169,69 @@ const getImportanceColor = (importance) => {
 
 const styles = StyleSheet.create({
     container: {
-        marginTop: Constants.statusBarHeight,
         flex: 1,
+        paddingTop: Constants.statusBarHeight,
         paddingHorizontal: 20,
-        paddingVertical: 20,
+        paddingBottom: 20,
+        backgroundColor: '#F0F8FF', // azul claro
     },
-    taskList: {
-        paddingBottom: 70,
+    inputContainer: {
+        flexDirection: 'row',
+        marginBottom: 10,
+        marginTop: 20,
+    },
+    input: {
+        flex: 1,
+        height: 40,
+        borderWidth: 1,
+        borderColor: '#ccc',
+        borderRadius: 5,
+        paddingHorizontal: 10,
+        backgroundColor: '#ffffff', // blanco
+        padding: 20,
+    },
+    searchButton: {
+        backgroundColor: '#03A9F4', // azul claro
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+        padding: 10,
+    },
+    sectionHeader: {
+        backgroundColor: '#ffffff', // blanco
+        paddingVertical: 8,
+        paddingHorizontal: 10,
+        marginTop: 10,
+        borderTopWidth: 1,
+        borderTopColor: '#ccc',
+        borderBottomWidth: 1,
+        borderBottomColor: '#ccc',
+    },
+    sectionHeaderText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#333',
     },
     taskContainer: {
-        backgroundColor: '#fff',
+        backgroundColor: '#FEFEFF', // blanco
         borderRadius: 10,
         marginBottom: 15,
         padding: 15,
         elevation: 3,
         borderBottomWidth: 4,
+        borderColor: '#f0f0f0', // gris claro
     },
     taskName: {
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 5,
+        color: '#333',
     },
     taskDescription: {
         fontSize: 14,
         marginBottom: 5,
+        color: '#666',
     },
     dateContainer: {
         flexDirection: 'row',
@@ -213,42 +249,28 @@ const styles = StyleSheet.create({
     },
     actionButtonsContainer: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-end',
         marginTop: 10,
     },
     actionButton: {
-        backgroundColor: '#3498db',
         padding: 10,
-        flex: 1,
+        borderRadius: 5,
         marginHorizontal: 5,
+    },
+    deleteButton: {
+        backgroundColor: '#F44336', // rojo
+    },
+    updateButton: {
+        backgroundColor: '#2196F3', // azul
     },
     actionButtonText: {
         color: '#fff',
         textAlign: 'center',
     },
-    inputContainer: {
-        flexDirection: 'row',
-        marginBottom: 10,
-    },
-    input: {
-        flex: 1,
-        height: 40,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        borderRadius: 5,
-        paddingHorizontal: 10,
-    },
-    searchButton: {
-        backgroundColor: '#715CF8',
-        borderRadius: 5,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginLeft: 10,
-    },
-    searchButtonText: {
-        color: '#fff',
-        paddingHorizontal: 10,
-        paddingVertical: 8,
+    icon: {
+        width: 20,
+        height: 20,
+        tintColor: '#ffffff', // blanco
     },
 });
 
