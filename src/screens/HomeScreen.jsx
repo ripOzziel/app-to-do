@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, TextInput, Alert, Image } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, FlatList, SectionList, TextInput, Alert, Image, Animated } from 'react-native';
 import Constants from 'expo-constants';
 import Footer from '../components/Footer.jsx';
 import { getAllTask, deleteTask, getTaskByCategory } from '../../api.js';
@@ -9,6 +9,29 @@ const HomeScreen = ({ route, navigation }) => {
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     const [category, setCategory] = useState('');
+    const [searchText, setSearchText] = useState('');
+    const [isSearchOpen, setSearchOpen] = useState(false);
+
+    const searchAnim = useRef(new Animated.Value(0)).current;
+
+    const handleSearchButtonVisibility = () => {
+        setSearchOpen(true);
+        Animated.timing(searchAnim, {
+            toValue: 1,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+    };
+
+    const handleCancelSearch = () => {
+        setCategory('');
+        setSearchOpen(false);
+        Animated.timing(searchAnim, {
+            toValue: 0,
+            duration: 300,
+            useNativeDriver: false,
+        }).start();
+    };
 
     useEffect(() => {
         const fetchTasksOnFocus = () => {
@@ -127,17 +150,55 @@ const HomeScreen = ({ route, navigation }) => {
 
     return (
         <View style={styles.container}>
-            <View style={styles.inputContainer}>
+            {
+                !isSearchOpen &&(
+                <TouchableOpacity style={styles.searchButton} onPress={handleSearchButtonVisibility}>
+                            <Image source={require('../../public/img/lupa.png')} style={styles.icon} />
+                </TouchableOpacity>
+
+                )
+            }
+            {
+                isSearchOpen &&(             
+             <View style={styles.inputContainer}> 
                 <TextInput
-                    style={styles.input}
+                    style={[styles.input, {
+                        width: searchAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: ['0%', '85%'],
+                        }),
+                        marginRight: searchAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [0, 10],
+                        }),
+                    }]}
                     placeholder="Buscar por categoría"
                     value={category}
                     onChangeText={setCategory}
                 />
-                <TouchableOpacity style={styles.searchButton} onPress={fetchTasks}>
-                    <Image source = {require('../../public/img/lupa.png')} style={styles.icon}/>
+                <Animated.View style={{
+                    width: searchAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: ['15%', '0%'],
+                    }),
+                    opacity: searchAnim.interpolate({
+                        inputRange: [0, 1],
+                        outputRange: [1, 0],
+                    }),
+                    overflow: 'hidden',
+                }}>
+                </Animated.View>
+                
+                    <TouchableOpacity style={styles.searchButton} onPress={fetchTasks}>
+                        <Image source={require('../../public/img/lupa.png')} style={styles.icon} />
+                    </TouchableOpacity>
+                <TouchableOpacity style={styles.cancelButton} onPress={handleCancelSearch}>
+                        <Text style={styles.cancelButtonText}>Cancelar</Text>
                 </TouchableOpacity>
+                
             </View>
+               )
+            }
             <SectionList
                 sections={sections}
                 renderItem={renderItem}
@@ -271,6 +332,15 @@ const styles = StyleSheet.create({
         width: 20,
         height: 20,
         tintColor: '#ffffff', // blanco
+    },
+    cancelButton: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+    },
+    cancelButtonText: {
+        color: '#03A9F4', // azul claro
+        fontWeight: 'bold',
     },
 });
 

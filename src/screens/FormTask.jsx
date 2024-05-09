@@ -17,7 +17,7 @@ const FormTask = ({ route, navigation }) => {
     const [dueTime, setDueTime] = useState(defaultDueTime);
     const [importance, setImportance] = useState(taskToUpdate?.importance || '');
     const [category, setCategory] = useState(taskToUpdate?.category || '');
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(taskToUpdate?.dueTime || false);
     const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
     const [isPickerVisible, setPickerVisible] = useState(false);
 
@@ -71,6 +71,7 @@ const FormTask = ({ route, navigation }) => {
     const handlePickerVisibility = () => {
         setPickerVisible(true);
     };
+    
 
     const handlePickerChange = (itemValue, itemIndex) => {
         setImportance(itemValue)
