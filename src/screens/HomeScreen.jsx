@@ -151,10 +151,22 @@ const HomeScreen = ({ route, navigation }) => {
         <View style={styles.container}>
             {
                 !isSearchOpen &&(
-                <TouchableOpacity style={styles.searchButton} onPress={handleSearchButtonVisibility}>
+                    <Animated.View style={{
+                        opacity: searchAnim.interpolate({
+                            inputRange: [0, 1],
+                            outputRange: [1, 0],
+                        }),
+                        transform: [{
+                            translateX: searchAnim.interpolate({
+                                inputRange: [0, 1],
+                                outputRange: [0, 200],
+                            }),
+                        }],
+                    }}>
+                        <TouchableOpacity style={styles.searchButton2} onPress={handleSearchButtonVisibility}>
                             <Image source={require('../../public/img/lupa.png')} style={styles.icon} />
-                </TouchableOpacity>
-
+                        </TouchableOpacity>
+                    </Animated.View>
                 )
             }
             {
@@ -164,7 +176,7 @@ const HomeScreen = ({ route, navigation }) => {
                     style={[styles.input, {
                         width: searchAnim.interpolate({
                             inputRange: [0, 1],
-                            outputRange: ['0%', '85%'],
+                            outputRange: ['0%', '60%'],
                         }),
                         marginRight: searchAnim.interpolate({
                             inputRange: [0, 1],
@@ -178,7 +190,7 @@ const HomeScreen = ({ route, navigation }) => {
                 <Animated.View style={{
                     width: searchAnim.interpolate({
                         inputRange: [0, 1],
-                        outputRange: ['15%', '0%'],
+                        outputRange: ['30%', '0%'],
                     }),
                     opacity: searchAnim.interpolate({
                         inputRange: [0, 1],
@@ -186,8 +198,8 @@ const HomeScreen = ({ route, navigation }) => {
                     }),
                     overflow: 'hidden',
                 }}>
-                </Animated.View>
                 
+                </Animated.View>
                     <TouchableOpacity style={styles.searchButton} onPress={fetchTasks}>
                         <Image source={require('../../public/img/lupa.png')} style={styles.icon} />
                     </TouchableOpacity>
@@ -257,6 +269,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginLeft: 10,
         padding: 10,
+    },
+    searchButton2: {
+        backgroundColor: '#03A9F4', // azul claro
+        borderRadius: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginLeft: 10,
+        padding: 10,
+        width: 40,
+        
     },
     sectionHeader: {
         backgroundColor: '#ffffff', // blanco

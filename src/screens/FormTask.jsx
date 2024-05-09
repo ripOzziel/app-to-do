@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import {Picker} from '@react-native-picker/picker';
-import DateTimePickerModal from "react-native-modal-datetime-picker";
+//import DateTimePickerModal from "react-native-modal-datetime-picker";
+import DateTimePicker from '@react-native-community/datetimepicker'; // Importar desde @react-native-community/datetimepicker
+
 import { saveTask, updateTask } from "../../api.js";
 
 const FormTask = ({ route, navigation }) => {
@@ -9,12 +11,12 @@ const FormTask = ({ route, navigation }) => {
     const taskToUpdate = route.params?.taskToUpdate;
 
     const defaultDueDate = taskToUpdate?.due_date ? new Date(taskToUpdate.due_date) : new Date();
-    //const defaultDueTime = taskToUpdate?.due_time ? new Date(taskToUpdate.due_time) : new Date();
+    const defaultDueTime = taskToUpdate?.due_time ? new Date(taskToUpdate.due_time) : new Date();
     
     const [title, setTitle] = useState(taskToUpdate?.name || '');
     const [description, setDescription] = useState(taskToUpdate?.description || '');
     const [dueDate, setDueDate] = useState(defaultDueDate);
-    const [dueTime, setDueTime] = useState(taskToUpdate?.due_time||new Date());
+    const [dueTime, setDueTime] = useState(defaultDueDate);
     const [importance, setImportance] = useState(taskToUpdate?.importance || '');
     const [category, setCategory] = useState(taskToUpdate?.category || '');
     const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
@@ -68,6 +70,18 @@ const FormTask = ({ route, navigation }) => {
         hideTimePicker();
     };
 
+    const handleDateChange = (event, selectedDate) => {
+        const currentDate = selectedDate || dueDate;
+        setDueDate(currentDate);
+        setDatePickerVisibility(false);
+    };
+
+    const handleTimeChange = (event, selectedTime) => {
+        const currentTime = selectedTime || dueTime;
+        setDueTime(currentTime);
+        setTimePickerVisibility(false);
+    };
+
     const handlePickerVisibility = () => {
         setPickerVisible(true);
     };
@@ -96,28 +110,30 @@ const FormTask = ({ route, navigation }) => {
             />
             <TouchableOpacity
                 style={styles.input}
-                onPress={showDatePicker}
+                onPress={() => setDatePickerVisibility(true)}
             >
                 <Text>Fecha de vencimiento: {dueDate.toLocaleDateString()}</Text>
             </TouchableOpacity>
-            <DateTimePickerModal
-                isVisible={isDatePickerVisible}
-                mode="date"
-                onConfirm={handleDateConfirm}
-                onCancel={hideDatePicker}
-            />
+            {isDatePickerVisible && (
+                <DateTimePicker
+                    value={dueDate}
+                    mode="date"
+                    onChange={handleDateChange}
+                />
+            )}
             <TouchableOpacity
                 style={styles.input}
-                onPress={showTimePicker}
+                onPress={() => setTimePickerVisibility(true)}
             >
                 <Text>Hora límite: {taskToUpdate?.due_time || dueTime.toLocaleTimeString()}</Text>
             </TouchableOpacity>
-            <DateTimePickerModal
-                isVisible={isTimePickerVisible}
-                mode="time"
-                onConfirm={handleTimeConfirm}
-                onCancel={hideTimePicker}
-            />
+            {isTimePickerVisible && (
+                <DateTimePicker
+                    value={dueTime}
+                    mode="time"
+                    onChange={handleTimeChange}
+                />
+            )}
             
                 <TouchableOpacity style={styles.input} onPress={handlePickerVisibility}>
                 <Text>Seleccionar: {importance}</Text>
