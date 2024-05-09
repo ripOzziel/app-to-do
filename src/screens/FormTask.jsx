@@ -9,23 +9,23 @@ const FormTask = ({ route, navigation }) => {
     const taskToUpdate = route.params?.taskToUpdate;
 
     const defaultDueDate = taskToUpdate?.due_date ? new Date(taskToUpdate.due_date) : new Date();
-    const defaultDueTime = taskToUpdate?.due_time ? new Date(taskToUpdate.due_time) : new Date();
+    //const defaultDueTime = taskToUpdate?.due_time ? new Date(taskToUpdate.due_time) : new Date();
     
     const [title, setTitle] = useState(taskToUpdate?.name || '');
     const [description, setDescription] = useState(taskToUpdate?.description || '');
     const [dueDate, setDueDate] = useState(defaultDueDate);
-    const [dueTime, setDueTime] = useState(defaultDueTime);
+    const [dueTime, setDueTime] = useState(taskToUpdate?.due_time||new Date());
     const [importance, setImportance] = useState(taskToUpdate?.importance || '');
     const [category, setCategory] = useState(taskToUpdate?.category || '');
-    const [isDatePickerVisible, setDatePickerVisibility] = useState(taskToUpdate?.dueTime || false);
+    const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
     const [isTimePickerVisible, setTimePickerVisibility] = useState(false);
     const [isPickerVisible, setPickerVisible] = useState(false);
-
+    
     const addTask = async () => {
         try {
             const currentDate = new Date().toISOString().substring(0, 19).replace('T', ' ');
             const dueDateFormatted = dueDate.toISOString().substring(0, 19).replace('T', ' ');
-            const dueTimeFormatted = dueTime.getHours() + ':' + dueTime.getMinutes() + ':' + dueTime.getSeconds();
+            const dueTimeFormatted = taskToUpdate?.due_time || dueTime.getHours() + ':' + dueTime.getMinutes() + ':' + dueTime.getSeconds();
 
             const taskData = {
                 name: title,
@@ -110,7 +110,7 @@ const FormTask = ({ route, navigation }) => {
                 style={styles.input}
                 onPress={showTimePicker}
             >
-                <Text>Hora límite: {dueTime.toLocaleTimeString()}</Text>
+                <Text>Hora límite: {taskToUpdate?.due_time || dueTime.toLocaleTimeString()}</Text>
             </TouchableOpacity>
             <DateTimePickerModal
                 isVisible={isTimePickerVisible}

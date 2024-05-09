@@ -9,7 +9,6 @@ const HomeScreen = ({ route, navigation }) => {
     const [tasks, setTasks] = useState([]);
     const [expandedTaskId, setExpandedTaskId] = useState(null);
     const [category, setCategory] = useState('');
-    const [searchText, setSearchText] = useState('');
     const [isSearchOpen, setSearchOpen] = useState(false);
 
     const searchAnim = useRef(new Animated.Value(0)).current;
